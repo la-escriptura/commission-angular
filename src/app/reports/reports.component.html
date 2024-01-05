@@ -1,0 +1,43 @@
+<div class="container" style="width: 800px;">
+    <div class="row">
+      <div class="col-sm-12">
+        <div class="row">
+          <div class="col-sm-12">
+            <form [formGroup]="frm">
+              <div class="row">
+                <div class="col-12 list-group">
+                  <!-- <div id="exportthis" echarts [options]="chartOption" (chartClick)="onChartClick($event)"></div> -->
+                  <div class="row list-group-item">
+                    <div class="col-sm-8" style="margin-top: 7px;"><label>1.) Sales Report</label></div>
+                    <div class="col-sm-3"><input class="form-control" id="salesReport" formControlName="salesReport" type="month" /></div>
+                    <div class="col-sm-1"><button class="btn btn-primary cmd" type="button" (click)="genSalesReport()" [disabled]="!frm.controls['salesReport'].valid">View</button></div>
+                  </div>
+                  <div class="row list-group-item">
+                    <div class="col-sm-8" style="margin-top: 7px;"><label>2.) Statement of Account</label></div>
+                    <div class="col-sm-3"></div>
+                    <div class="col-sm-1"><button class="btn btn-primary cmd" type="button" (click)="genSOA()">View</button></div>
+                  </div>
+                  <div class="row list-group-item">
+                    <div class="col-sm-8" style="margin-top: 7px;"><label>3.) Commission Collection</label></div>
+                    <div class="col-sm-3"><input class="form-control" id="commCollect" formControlName="commCollect" type="month" /></div>
+                    <div class="col-sm-1"><button class="btn btn-primary cmd" type="button" (click)="genCommCollect()" [disabled]="!frm.controls['commCollect'].valid">View</button></div>
+                  </div>
+                  <div class="row list-group-item">
+                    <div class="col-sm-8" style="margin-top: 7px;"><label>4.) Corporate Commission</label></div>
+                    <div class="col-sm-3"><input class="form-control" id="corpComm" formControlName="corpComm" type="month" /></div>
+                    <div class="col-sm-1"><button class="btn btn-primary cmd" type="button" (click)="genCorpComm()" [disabled]="!frm.controls['corpComm'].valid">View</button></div>
+                  </div>
+                  <div class="row list-group-item">
+                    <div class="col-sm-8" style="margin-top: 7px;"><label>5.) Sales Representative Commission</label></div>
+                    <div class="col-sm-3"><input class="form-control" id="salesRepComm" formControlName="salesRepComm" type="month" /></div>
+                    <div class="col-sm-1"><button class="btn btn-primary cmd" type="button" (click)="genSalesRepComm()" [disabled]="!frm.controls['salesRepComm'].valid">View</button></div>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+</div>
+  

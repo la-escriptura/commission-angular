@@ -1,0 +1,297 @@
+<div class="row">
+	<div class="col-sm-12"> 
+		<form [formGroup]="frm" (ngSubmit)="onSubmit()">
+			<div class="container">
+				<div class="row">
+					<div class="col-sm-3 form-group pull-right">
+						<label for="or">Official Receipt No.</label>
+						<input 
+							class="form-control"
+							id="or" 
+							formControlName="or"
+							type="text" *hasNotRoles="[roles.receipteditor,roles.receiptadmin,roles.admin]; for: user"/>
+						<div [ngClass]="{'input-group': isAdmin}" *hasRoles="[roles.receipteditor,roles.receiptadmin,roles.admin]; for: user">
+							<ng-template [ngIf]= "!isEditReceipt">
+								<input 
+									class="form-control"
+									id="or" 
+									formControlName="or"
+									type="text" />
+							</ng-template>
+							<ng-template [ngIf]= "isEditReceipt">
+								<mat-select class="form-control" id="or" formControlName="or">
+									<mat-option><ngx-mat-select-search formControlName="orSearch" placeholderLabel="Search" noEntriesFoundLabel="Not found"></ngx-mat-select-search></mat-option>
+									<!-- <mat-option value="null" selected disabled>--Select option--</mat-option> -->
+									<mat-option *ngFor="let or of orFiltered | async" [value]="or">{{ or.orno }}</mat-option>
+								</mat-select>
+							</ng-template>
+							<span class="input-group-btn" *ngIf="isAdmin"><button class="btn btn-info" type="button" id="toggleReceipt" (click)="onToggleReceiptControl()">{{ isEditReceipt ? 'Update' : 'Create' }}</button></span>
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-sm-9 form-group">
+						<label for="customerName">Customer Name</label>
+						<ng-template [ngIf]= "isEditReceipt">
+							<input 
+								class="form-control"
+								id="customerName" 
+								formControlName="customerName"
+								type="text"
+								readonly
+								tabindex="-1" />
+						</ng-template>
+						<ng-template [ngIf]= "!isEditReceipt">
+							<div class="input-group">
+								<mat-select class="form-control" id="customerName" formControlName="customerName">
+									<mat-option><ngx-mat-select-search formControlName="customerNameSearch" placeholderLabel="Search" noEntriesFoundLabel="Not found"></ngx-mat-select-search></mat-option>
+									<!-- <mat-option value="null" selected disabled>--Select option--</mat-option> -->
+									<mat-option *ngFor="let objInvoice of customerNameFiltered | async" [value]="objInvoice">{{ objInvoice.custname }}</mat-option>
+								</mat-select>
+								<span class="input-group-btn" style="min-width: 70px;">
+									<input 
+										style="text-align: right;border-right: 0;font-style: italic;"
+										class="form-control"
+										id="rowLimitInvoice" 
+										formControlName="rowLimitInvoice"
+										type="number"
+										min="{{ (onGetCountInvoices() === 0 ? 0 : 1) }}" max="{{ onGetCountInvoices() }}" 
+										(change)="onChangeRowLimitInvoice($event)" />
+								</span>
+								<span class="input-group-addon" style="padding-left: 0;background-color: white;font-style: italic;">
+									<ng-container *ngIf="!isNullRowLimitInvoice()">of</ng-container><ng-container *ngIf="isNullRowLimitInvoice()">&nbsp;&nbsp;&nbsp;</ng-container>&nbsp;&nbsp;&nbsp;{{ onGetCountInvoices() }}&nbsp;&nbsp;&nbsp;row(s) display
+								</span>
+							</div>
+						</ng-template>
+					</div>
+					<div class="col-sm-3 form-group">
+						<label for="dt">Date</label>
+						<input 
+							class="form-control"
+							id="dt" 
+							formControlName="dt"
+							type="date" />
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-sm-9 form-group">
+						<label for="amountInWords">Amount in Words</label>
+						<input 
+							style="font-style: italic;"
+							class="form-control" 
+							id="amountInWords" 
+							formControlName="amountInWords" 
+							type="text" 
+							readonly
+							tabindex="-1" />
+					</div>
+					<div class="col-sm-3 form-group">
+						<label for="amountReceived">Amount</label>
+						<div class="input-group">
+							<span class="input-group-addon">₱</span>
+							<input 
+								style="text-align: right;border-left: 0;" 
+								class="form-control" 
+								id="amountReceived" 
+								formControlName="amountReceived" 
+								type="text" 
+								readonly
+								tabindex="-1" />
+							</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="container-invoice">
+				<div class="row">
+					<div class="col-sm-12" style="padding-left: 5px;">
+						<hr/>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-sm-3">
+						<div class="row">
+							<div class="col-sm-5 form-group invoice">
+								<label for="invoiceNo">Invoice No.</label>
+							</div>
+							<div class="col-sm-7">
+								<div class="row">
+									<div class="col-sm-6 form-group invoice">
+										<label for="Date">Date</label>
+									</div>
+									<div class="col-sm-6 form-group invoice">
+										<label for="Date">Job Order No.</label>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-sm-8">
+						<div class="row">
+							<div class="col-sm-12">
+								<div class="row">
+									<div class="col-sm-1 form-group invoice">
+										<label for="netOfVat">Net of VAT</label>
+									</div>
+									<div class="col-sm-1 form-group invoice">
+										<label for="vat">{{ onGetVat() }}% VAT</label>
+									</div>
+									<div class="col-sm-1 form-group invoice">
+										<label for="sellingPrice">Selling Price</label>
+									</div>
+									<div class="col-sm-1 form-group invoice">
+										<label for="docStamps">Doc. Stamps</label>
+									</div>
+									<div class="col-sm-1 form-group invoice">
+										<label for="invoiceAmount">Invoice Amt.</label>
+									</div>
+									<div class="col-sm-1 form-group invoice">
+										<label for="rebate">Rebate</label>
+									</div>
+									<div class="col-sm-1 form-group invoice">
+										<label for="retention">Retention</label>
+									</div>
+									<div class="col-sm-1 form-group invoice">
+										<label for="penalty">Penalty</label>
+									</div>
+									<div class="col-sm-1 form-group invoice">
+										<label for="govShare">Gov. Share</label>
+									</div>
+									<div class="col-sm-1 form-group invoice">
+										<label for="withheld{{ onGetWithheld(0) }}" style="cursor: pointer;" (click)="onCalculateInvoicesWithheld(0)">{{ onGetWithheld(0) }}% Withheld</label> <!--  -->
+									</div>
+									<div class="col-sm-1 form-group invoice">
+										<label for="withheld{{ onGetWithheld(1) }}" style="cursor: pointer;" (click)="onCalculateInvoicesWithheld(1)">{{ onGetWithheld(1) }}% Withheld</label> <!--  -->
+									</div>
+									<div class="col-sm-1 form-group invoice">
+										<label for="withheld{{ onGetWithheld(2) }}" style="cursor: pointer;" (click)="onCalculateInvoicesWithheld(2)">{{ onGetWithheld(2) }}% Withheld</label> <!--  -->
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-sm-1">
+						<div class="row">
+							<div class="col-sm-9 form-group invoice">
+								<label for="totalAmount">Total Amount</label>
+							</div>
+							<div class="col-sm-3 form-group invoice">
+								<button type="button" class="btn btn-success" (click)="onAddInvoice()" [disabled]="onSetEnable || isEditReceipt">+</button>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="row">
+					<div class="col-sm-12" formArrayName="invoices">
+						<div class="row" [formGroupName]="i" *ngFor="let invoiceCtrl of controls; let i = index">
+							<div class="col-sm-3">
+								<div class="row">
+									<div class="col-sm-5 form-group invoice">
+										<ng-template [ngIf]= "isEditReceipt">
+											<input 
+												class="form-control"
+												id="accountid" 
+												formControlName="accountid"
+												type="hidden" />
+											<input 
+												class="form-control"
+												id="invoiceNo" 
+												formControlName="invoiceNo"
+												type="text"
+												readonly
+												tabindex="-1" />
+										</ng-template>
+										<ng-template [ngIf]= "!isEditReceipt">
+											<mat-select class="form-control" [name]="i" formControlName="invoiceNo" (selectionChange)="onSelectionChangeInvoiceNo($event, i)" (click)="onClickInvoiceNo($event, i)"> <!--  -->
+												<mat-option><ngx-mat-select-search formControlName="invoiceNoSearch" placeholderLabel="Search" noEntriesFoundLabel="Not found" (keyup)="onKeyupInvoiceNoSearch($event, i)"></ngx-mat-select-search></mat-option>
+												<!-- <mat-option value="null" selected disabled>--Select--</mat-option> -->
+												<mat-option *ngFor="let invoice of invoiceNoFiltered[i] | async" [value]="invoice">{{ invoice.invoiceno }}</mat-option>
+											</mat-select>
+										</ng-template>
+									</div>
+									<div class="col-sm-7">
+										<div class="row">
+											<div class="col-sm-6 form-group invoice">
+												<input class="form-control" [name]="i" formControlName="dt" type="text" readonly tabindex="-1" />
+											</div>
+											<div class="col-sm-6 form-group invoice">
+												<input class="form-control" [name]="i" formControlName="jobOrderNo" type="text" readonly tabindex="-1" />
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="col-sm-8">
+								<div class="row">
+									<div class="col-sm-12">
+										<div class="row">
+											<div class="col-sm-1 form-group invoice">
+												<input style="text-align: right;" class="form-control" [name]="i" formControlName="netOfVat" type="text" readonly tabindex="-1" />
+											</div>
+											<div class="col-sm-1 form-group invoice">
+												<input style="text-align: right;" class="form-control" [name]="i" formControlName="vat" type="text" readonly tabindex="-1" />
+											</div>
+											<div class="col-sm-1 form-group invoice">
+												<input style="text-align: right;" class="form-control" [name]="i" formControlName="sellingPrice" type="text" readonly tabindex="-1" />
+											</div>
+											<div class="col-sm-1 form-group invoice">
+												<input style="text-align: right;" class="form-control" [name]="i" formControlName="docStamps" type="text" readonly tabindex="-1" />
+											</div>
+											<div class="col-sm-1 form-group invoice">
+												<input style="text-align: right;" class="form-control" [name]="i" formControlName="invoiceAmount" type="text" readonly tabindex="-1" />
+											</div>
+											<div class="col-sm-1 form-group invoice">
+												<input style="text-align: right;" class="form-control" [name]="i" formControlName="rebate" (change)="onChangeDeductions($event, i)" type="text" (focus)="removeCommas($event)" (blur)="addCommas($event, 0)" />
+											</div>
+											<div class="col-sm-1 form-group invoice">
+												<input style="text-align: right;" class="form-control" [name]="i" formControlName="retention" (change)="onChangeDeductions($event, i)" type="text" (focus)="removeCommas($event)" (blur)="addCommas($event, 0)" />
+											</div>
+											<div class="col-sm-1 form-group invoice">
+												<input style="text-align: right;" class="form-control" [name]="i" formControlName="penalty" (change)="onChangeDeductions($event, i)" type="text" (focus)="removeCommas($event)" (blur)="addCommas($event, 0)" />
+											</div>
+											<div class="col-sm-1 form-group invoice">
+												<input style="text-align: right;" class="form-control" [name]="i" formControlName="govShare" (change)="onChangeDeductions($event, i)" type="text" (focus)="removeCommas($event)" (blur)="addCommas($event, 0)" />
+											</div>
+											<div class="col-sm-1 form-group invoice">
+												<input style="text-align: right;" class="form-control" [name]="i" formControlName="withheld{{ onGetWithheld(0) }}" (change)="onChangeDeductions($event, i)" type="text" (focus)="removeCommas($event)" (blur)="addCommas($event, 0)" />
+											</div>
+											<div class="col-sm-1 form-group invoice">
+												<input style="text-align: right;" class="form-control" [name]="i" formControlName="withheld{{ onGetWithheld(1) }}" (change)="onChangeDeductions($event, i)" type="text" (focus)="removeCommas($event)" (blur)="addCommas($event, 0)" />
+											</div>
+											<div class="col-sm-1 form-group invoice">
+												<input style="text-align: right;" class="form-control" [name]="i" formControlName="withheld{{ onGetWithheld(2) }}" (change)="onChangeDeductions($event, i)" type="text" (focus)="removeCommas($event)" (blur)="addCommas($event, 0)" />
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="col-sm-1">
+								<div class="row">
+									<div class="col-sm-9 form-group invoice">
+										<input style="text-align: right;" class="form-control" [name]="i" formControlName="totalAmount" type="text" readonly tabindex="-1" />
+									</div>
+									<div class="col-sm-3 form-group invoice">
+										<button type="button" class="btn btn-danger" (click)="onDeleteInvoice(i)" [disabled]="isEditReceipt">x</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="row">
+					<div class="col-sm-12" style="padding-left: 5px;">
+						<hr/>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-sm-12 text-right" style="padding-right: 0px;">
+						<button class="btn btn-success cmd" type="submit" [disabled]="!frm.valid">Submit</button>
+						<button class="btn btn-primary cmd" type="button" (click)="onClear()">Clear</button>
+					</div>
+				</div>
+			</div>
+		</form>
+	</div>
+</div>

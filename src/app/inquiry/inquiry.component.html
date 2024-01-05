@@ -1,0 +1,108 @@
+<div class="row">
+	<div class="col-sm-12"> 
+		<form [formGroup]="frm" (ngSubmit)="onSubmit()">
+			<div class="container">
+			  <div class="row">
+				  <div class="col-sm-12">
+					  <div class="row">
+						<div class="col-sm-4 form-group">
+							<label for="jobOrder">Job Order No.</label>
+							<textarea class="form-control" id="jobOrder" formControlName="jobOrder" placeholder='Input "Job Order No." here separated by space or line-break.'></textarea>
+						</div>
+						<div class="col-sm-4 form-group">
+							<label for="invoice">Invoice No.</label>
+							<textarea class="form-control" id="invoice" formControlName="invoice" placeholder='Input "Invoice No." here separated by space or line-break.'></textarea>
+						</div>
+						<div class="col-sm-4 form-group">
+							<label for="or">Official Receipt No.</label>
+							<textarea class="form-control" id="or" formControlName="or" placeholder='Input "Official Receipt No." here separated by space or line-break.'></textarea>
+						</div>
+					  </div>
+					  <div class="row">
+						<div class="col-sm-12 text-right">
+							<button class="btn btn-success cmd" type="submit" [disabled]="!frm.valid">Submit</button>
+							<button class="btn btn-primary cmd" type="button" (click)="onClear()">Clear</button>
+						</div>
+					  </div>
+				  </div>
+			  </div>
+			</div>
+			<div class="container-inquiry">
+				<table class="table table-hover" style="font-size: x-small;">
+					<thead>
+						<tr style="text-align: center;">
+							<th class="text-center">{{ onGetCountMasterData() }} items</th>
+							<th class="text-center">SR</th>
+							<th class="text-center" style="background-color: lightyellow">JO No</th>
+							<th class="text-center">JO Date</th>
+							<th class="text-center">Order Ref</th>
+							<th class="text-center" style="background-color: lightyellow;">Invoice No</th>
+							<th class="text-center">Invoice Date</th>
+							<th class="text-center">DR</th>
+							<th class="text-center" style="background-color: lightyellow;">OR No</th>
+							<th class="text-center">OR Date</th>
+							<th class="text-center">Customer</th>
+							<th class="text-center">Form</th>
+							<th class="text-center">Unit</th>
+							<th class="text-center">JO Qty</th>
+							<th class="text-center">Invoice Qty</th>
+							<th class="text-center" style="background-color: lightyellow;">Remaining Balance</th>
+							<th class="text-center">Material Cost</th>
+							<th class="text-center">Process Cost</th>
+							<th class="text-center">Other Cost</th>
+							<th class="text-center">Transfer</th>
+							<th class="text-center">Selling Price</th>
+							<th class="text-center">Docs Stamps</th>
+							<th class="text-center">Discount</th>
+							<th class="text-center">Shipping</th>
+							<th class="text-center">Commission Basis</th>
+							<th class="text-center">Rebate</th>
+							<th class="text-center">Retention</th>
+							<th class="text-center">Penalty</th>
+							<th class="text-center">Gov Share</th>
+							<th class="text-center">1% withholding</th>
+							<th class="text-center">2% withholding</th>
+							<th class="text-center">5% withholding</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr *ngFor="let item of masterData; let i = index">
+							<td class="text-right"> {{ i+1 }}.) </td>
+							<td> {{ item["SR"] }} </td>
+							<td style="background-color: lightyellow"> {{ item["JO No"] }} </td>
+							<td> {{ item["JO Date"] }} </td>
+							<td> {{ item["Order Ref"] }} </td>
+							<td style="background-color: lightyellow"> {{ item["Invoice No"] }} </td>
+							<td> {{ item["Invoice Date"] }} </td>
+							<td> {{ item["DR"] }} </td>
+							<td style="background-color: lightyellow"> {{ item["OR No"] }} </td>
+							<td> {{ item["OR Date"] }} </td>
+							<td> {{ item["Customer"] }} </td>
+							<td> {{ item["Form"] }} </td>
+							<td> {{ item["Unit"] }} </td>
+							<td class="text-right"> {{ item["JO Qty"] }} </td>
+							<td class="text-right"> {{ item["Invoice Qty"] }} </td>
+							<td class="text-right" style="background-color: lightyellow;"> {{ item["Remaining Balance"] }} </td>
+							<td class="text-right"> {{ item["Material Cost"] }} </td>
+							<td class="text-right"> {{ item["Process Cost"] }} </td>
+							<td class="text-right"> {{ item["Other Cost"] }} </td>
+							<td class="text-right"> {{ item["Transfer"] }} </td>
+							<td class="text-right"> {{ item["Selling Price"] }} </td>
+							<td class="text-right"> {{ item["Docs Stamps"] }} </td>
+							<td class="text-right"> {{ item["Discount"] }} </td>
+							<td class="text-right"> {{ item["Shipping"] }} </td>
+							<td class="text-right"> {{ item["Commission Basis"] }} </td>
+							<td class="text-right"> {{ item["Rebate"] }} </td>
+							<td class="text-right"> {{ item["Retention"] }} </td>
+							<td class="text-right"> {{ item["Penalty"] }} </td>
+							<td class="text-right"> {{ item["Gov Share"] }} </td>
+							<td class="text-right"> {{ item["1% withholding"] }} </td>
+							<td class="text-right"> {{ item["2% withholding"] }} </td>
+							<td class="text-right"> {{ item["5% withholding"] }} </td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</form>
+	</div>
+</div>

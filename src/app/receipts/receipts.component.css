@@ -1,0 +1,55 @@
+input.ng-invalid.ng-touched {
+    border: 1px solid red;
+}
+
+/* .input-group-addon {
+    min-width: 170px;
+    text-align:left;
+} */
+
+input[readonly] {
+    background-color: #eeeeee;
+}
+
+input.empty {
+    background-image: repeating-linear-gradient(-45deg, #eeeeee, #eeeeee 5px, #dddddd 5px, #dddddd 10px);
+    /* background-color: #dddddd; */
+}
+
+.input-group-multi [class*='col-'] {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.input-group-multi .form-control {
+    border-right: 0;
+}
+
+.input-group-multi [class*='col-']:last-child .form-control {
+    border-radius: 0 4px 4px 0;
+    border-right: 1px solid #ccc;
+}
+
+.invoice {
+    padding: 0 3px 0 3px;
+}
+
+.invoice label {
+    width: 100%;
+    height: 33px;
+    padding: 9px 3px 8px 3px;
+    border-radius: 5px;
+    background-color: gray;
+    font-size: 11px;
+    text-align: center;
+    color: white;
+}
+
+.invoice input {
+    padding: 0 3px 0 3px;
+    font-size: 11px;
+}
+
+.container-invoice {
+    margin: 0 50px 0 50px;
+}

@@ -1,0 +1,84 @@
+input.ng-invalid.ng-touched {
+    border: 1px solid red;
+}
+
+.lbl {
+    min-width: 170px;
+    text-align:left;
+}
+
+.parenthesis-left {
+    margin: 0 !important;
+    padding: 0 0 0 3px !important;
+    border-right: 0;
+    font-family: monospace;
+}
+
+.parenthesis-right {
+    margin: 0 !important;
+    padding: 0 3px 0 0 !important;
+    border-left: 0;
+    font-family: monospace;
+}
+
+input[readonly] {
+    background-color: #eeeeee;
+}
+
+input.empty {
+    background-image: repeating-linear-gradient(-45deg, #eeeeee, #eeeeee 5px, #dddddd 5px, #dddddd 10px);
+    /* background-color: #dddddd; */
+}
+
+.input-group-multi [class*='col-'] {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.input-group-multi .form-control {
+    border-right: 0;
+    border-left: 0;
+}
+
+.input-group-multi [class*='col-']:last-child .form-control {
+    border-radius: 0 4px 4px 0;
+    border-right: 1px solid #ccc;
+}
+
+#toggleCustomerName {
+    width: 70px;
+}
+
+#toggleJobOrder {
+    width: 70px;
+}
+
+.single-underline::before {
+    content: '';
+    position: absolute;
+    z-index: 25;
+    width: 94%;
+    left: 3%;
+    top: 32px;
+    border-top: 1px solid black;
+}
+
+.double-underline::before {
+    content: '';
+    position: absolute;
+    z-index: 25;
+    width: 94%;
+    left: 3%;
+    top: 32px;
+    border-top-style: double;
+}
+
+.mat-tooltip{
+    white-space: pre-line;
+    font-size:8pt;
+    font-family: monospace;
+}
+.mat-tooltip .mdc-tooltip__surface{
+    text-align: left;
+    max-width: unset !important;
+}

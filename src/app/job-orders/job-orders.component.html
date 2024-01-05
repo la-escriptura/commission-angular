@@ -1,0 +1,685 @@
+<div class="container">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="row">
+                <div class="col-sm-12"> 
+                    <form [formGroup]="frm" (ngSubmit)="onSubmit()">
+                        <div class="row">
+                            <div class="col-sm-6 form-group">
+                                <label for="customerName">Customer Name</label>
+                                <div class="input-group">
+                                    <ng-template [ngIf]= "isNewCustomerName">
+                                        <input 
+                                            class="form-control"
+                                            id="customerName" 
+                                            formControlName="customerName"
+                                            type="text" 
+                                            placeholder="--Input here--" />
+                                    </ng-template>
+                                    <ng-template [ngIf]= "!isNewCustomerName">
+                                        <mat-select class="form-control" id="customerName" formControlName="customerName">
+                                            <mat-option><ngx-mat-select-search formControlName="customerNameSearch" placeholderLabel="Search" noEntriesFoundLabel="Not found"></ngx-mat-select-search></mat-option>
+                                            <!-- <mat-option value="null" selected disabled>--Select option--</mat-option> -->
+                                            <mat-option *ngFor="let customer of customerNameFiltered | async" [value]="customer.custid">{{ customer.custname }}</mat-option>
+                                        </mat-select>
+                                    </ng-template>
+                                    <span class="input-group-btn"><button class="btn btn-info" type="button" id="toggleCustomerName" (click)="onToggleCustomerNameControl()">{{ isNewCustomerName ? 'New' : 'Repeat' }}</button></span> 
+                                </div>
+                            </div>
+                            <div class="col-sm-3 form-group">
+                                <label for="orderRef">Order Ref</label>
+                                <input 
+                                    class="form-control"
+                                    id="orderRef" 
+                                    formControlName="orderRef"
+                                    type="text" />
+                            </div>
+                            <div class="col-sm-3 form-group">
+                                <label for="dt">Date</label>
+                                <input 
+                                    class="form-control"
+                                    id="dt" 
+                                    formControlName="dt"
+                                    type="date" />
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-sm-6 form-group">
+                                <label for="formTitle">Form Title</label>
+                                <input 
+                                    class="form-control"
+                                    id="formTitle" 
+                                    formControlName="formTitle"
+                                    type="text" />
+                            </div>
+                            <div class="col-sm-3 form-group">
+                                <label for="quantity">Quantity</label>
+                                <input 
+                                    style="text-align: right;"
+                                    class="form-control"
+                                    id="quantity" 
+                                    formControlName="quantity"
+                                    type="text"
+                                    (focus)="removeCommas($event)" (blur)="addCommas($event, 0, 0, 0)" />
+                            </div>
+                            <div class="col-sm-3 form-group">
+                                <label for="unitMeasure">Unit Measure</label>
+                                <input 
+                                    class="form-control"
+                                    id="unitMeasure" 
+                                    formControlName="unitMeasure"
+                                    type="text"
+                                    list="unitMeasures" />
+                                <datalist id="unitMeasures">
+                                    <option *ngFor="let unitMeasure of unitMeasuresData;" value="{{ unitMeasure }}"></option>
+                                </datalist>
+                            </div>
+                        </div>
+
+                        <br />
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="input-group input-group-multi">
+                                            <div class="input-group-addon lbl"></div>
+                                            <span class="input-group-addon parenthesis-left">&nbsp;</span>
+                                            <div class="col-sm-12">
+                                                <input
+                                                    style="text-align: center;font-weight: bold;"
+                                                    class="form-control"
+                                                    value="Unit"
+                                                    readonly
+                                                    tabindex="-1" />
+                                            </div>
+                                            <span class="input-group-addon parenthesis-right">&nbsp;</span>
+                                            <span class="input-group-addon parenthesis-left">&nbsp;</span>
+                                            <div class="col-sm-12 no-gutters">
+                                                <input
+                                                    style="text-align: center;font-weight: bold;"
+                                                    class="form-control"
+                                                    value="Total"
+                                                    readonly
+                                                    tabindex="-1" />
+                                            </div>
+                                            <span class="input-group-addon parenthesis-right">&nbsp;</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="input-group input-group-multi">
+                                            <div class="input-group-addon lbl" style="text-align: right;font-weight: bold;">Material Cost:</div>
+                                            <span class="input-group-addon parenthesis-left">&nbsp;</span>
+                                            <div class="col-sm-12">
+                                                <input
+                                                    style="text-align: right;"
+                                                    class="form-control"
+                                                    id="materialCostUnit" 
+                                                    formControlName="materialCostUnit"
+                                                    type="text"
+                                                    readonly
+                                                    tabindex="-1" />
+                                            </div>
+                                            <span class="input-group-addon parenthesis-right">&nbsp;</span>
+                                            <span class="input-group-addon parenthesis-left" style="background-color: white;">&nbsp;</span>
+                                            <div class="col-sm-12 no-gutters">
+                                                <input
+                                                    style="text-align: right;"
+                                                    class="form-control"
+                                                    id="materialCostTotal" 
+                                                    formControlName="materialCostTotal"
+                                                    type="text"
+                                                    (focus)="removeCommas($event)" (blur)="addCommas($event, 0)" />
+                                            </div>
+                                            <span class="input-group-addon parenthesis-right" style="background-color: white;">&nbsp;</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="input-group input-group-multi">
+                                            <div class="input-group-addon lbl" style="text-align: right;font-weight: bold;">Process Cost:</div>
+                                            <span class="input-group-addon parenthesis-left">&nbsp;</span>
+                                            <div class="col-sm-12">
+                                                <input
+                                                    style="text-align: right;"
+                                                    class="form-control"
+                                                    id="processCostUnit" 
+                                                    formControlName="processCostUnit"
+                                                    type="text"
+                                                    readonly
+                                                    tabindex="-1" />
+                                            </div>
+                                            <span class="input-group-addon parenthesis-right">&nbsp;</span>
+                                            <span class="input-group-addon parenthesis-left" style="background-color: white;">&nbsp;</span>
+                                            <div class="col-sm-12 no-gutters">
+                                                <input
+                                                    style="text-align: right;"
+                                                    class="form-control"
+                                                    id="processCostTotal" 
+                                                    formControlName="processCostTotal"
+                                                    type="text"
+                                                    (focus)="removeCommas($event)" (blur)="addCommas($event, 0)" />
+                                            </div>
+                                            <span class="input-group-addon parenthesis-right" style="background-color: white;">&nbsp;</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="input-group input-group-multi">
+                                            <div class="input-group-addon lbl" style="text-align: right;font-weight: bold;">Other Cost:</div>
+                                            <span class="input-group-addon parenthesis-left">&nbsp;</span>
+                                            <div class="col-sm-12 single-underline">
+                                                <input
+                                                    style="text-align: right;"
+                                                    class="form-control"
+                                                    id="otherCostUnit" 
+                                                    formControlName="otherCostUnit"
+                                                    type="text"
+                                                    readonly
+                                                    tabindex="-1" />
+                                            </div>
+                                            <span class="input-group-addon parenthesis-right">&nbsp;</span>
+                                            <span class="input-group-addon parenthesis-left" style="background-color: white;">&nbsp;</span>
+                                            <div class="col-sm-12 no-gutters single-underline">
+                                                <input
+                                                    style="text-align: right;"
+                                                    class="form-control"
+                                                    id="otherCostTotal" 
+                                                    formControlName="otherCostTotal"
+                                                    type="text"
+                                                    (focus)="removeCommas($event)" (blur)="addCommas($event, 0)" />
+                                            </div>
+                                            <span class="input-group-addon parenthesis-right" style="background-color: white;">&nbsp;</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="input-group input-group-multi">
+                                            <div class="input-group-addon lbl" style="text-align: right;font-weight: bold;">Total Cost:</div>
+                                            <span class="input-group-addon parenthesis-left">&nbsp;</span>
+                                            <div class="col-sm-12 double-underline">
+                                                <input
+                                                    style="text-align: right;"
+                                                    class="form-control"
+                                                    id="unitCost" 
+                                                    formControlName="unitCost"
+                                                    type="text"
+                                                    readonly
+                                                    tabindex="-1" />
+                                            </div>
+                                            <span class="input-group-addon parenthesis-right">&nbsp;</span>
+                                            <span class="input-group-addon parenthesis-left">&nbsp;</span>
+                                            <div class="col-sm-12 no-gutters double-underline">
+                                                <input
+                                                    style="text-align: right;"
+                                                    class="form-control"
+                                                    id="totalCost" 
+                                                    formControlName="totalCost"
+                                                    type="text"
+                                                    readonly
+                                                    tabindex="-1" />
+                                            </div>
+                                            <span class="input-group-addon parenthesis-right">&nbsp;</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="input-group input-group-multi">
+                                            <div class="input-group-addon lbl" style="text-align: right;font-weight: bold;" matTooltipClass="mat-tooltip" matTooltipPosition="right">Transfer (Net of VAT):</div> <!-- [matTooltip]="'If Transfer is equal 0 then:\n    Transfer (Net of VAT) = '+onGetFormulaTransfer()" -->
+                                            <span class="input-group-addon parenthesis-left">&nbsp;</span>
+                                            <div class="col-sm-12">
+                                                <input
+                                                    style="text-align: right;"
+                                                    class="form-control"
+                                                    id="unitTransfer" 
+                                                    formControlName="unitTransfer"
+                                                    type="text"
+                                                    readonly
+                                                    tabindex="-1" />
+                                            </div>
+                                            <span class="input-group-addon parenthesis-right">&nbsp;</span>
+                                            <span class="input-group-addon parenthesis-left" style="background-color: white;">&nbsp;</span>
+                                            <div class="col-sm-12 no-gutters">
+                                                <input
+                                                    style="text-align: right;"
+                                                    class="form-control"
+                                                    id="totalTransfer" 
+                                                    formControlName="totalTransfer"
+                                                    type="text"
+                                                    (focus)="removeCommas($event)" (blur)="addCommas($event, 0)" />
+                                            </div>
+                                            <span class="input-group-addon parenthesis-right" style="background-color: white;">&nbsp;</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="input-group input-group-multi">
+                                            <div class="input-group-addon lbl" style="text-align: right;font-weight: bold;" matTooltipClass="mat-tooltip" matTooltipPosition="right" [matTooltip]="'% Margin = '+onGetFormulaMargin()">% Margin:</div>
+                                            <span class="input-group-addon parenthesis-left">&nbsp;</span>
+                                            <div class="col-sm-12">
+                                                <input
+                                                    style="text-align: right;"
+                                                    class="form-control"
+                                                    id="marginUnit" 
+                                                    formControlName="marginUnit"
+                                                    type="text"
+                                                    readonly
+                                                    tabindex="-1" />
+                                            </div>
+                                            <span class="input-group-addon parenthesis-right">&nbsp;</span>
+                                            <span class="input-group-addon parenthesis-left">&nbsp;</span>
+                                            <div class="col-sm-12 no-gutters">
+                                                <input
+                                                    style="text-align: right;"
+                                                    class="form-control"
+                                                    id="marginTotal" 
+                                                    formControlName="marginTotal"
+                                                    type="text"
+                                                    readonly
+                                                    tabindex="-1" />
+                                            </div>
+                                            <span class="input-group-addon parenthesis-right">&nbsp;</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="row">
+                                            <div class="col-sm-12">
+                                                <div class="input-group input-group-multi">
+                                                    <div class="input-group-addon lbl"></div>
+                                                    <span class="input-group-addon parenthesis-left">&nbsp;</span>
+                                                    <div class="col-sm-12">
+                                                        <input
+                                                            style="text-align: center;font-weight: bold;"
+                                                            class="form-control"
+                                                            value="Unit"
+                                                            readonly
+                                                            tabindex="-1" />
+                                                    </div>
+                                                    <span class="input-group-addon parenthesis-right">&nbsp;</span>
+                                                    <span class="input-group-addon parenthesis-left">&nbsp;</span>
+                                                    <div class="col-sm-12 no-gutters">
+                                                        <input
+                                                            style="text-align: center;font-weight: bold;"
+                                                            class="form-control"
+                                                            value="Total"
+                                                            readonly
+                                                            tabindex="-1" />
+                                                    </div>
+                                                    <span class="input-group-addon parenthesis-right">&nbsp;</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-sm-12">
+                                                <div class="input-group input-group-multi">
+                                                    <div class="input-group-addon lbl" style="text-align: right;font-weight: bold;">Net of VAT:</div>
+                                                    <span class="input-group-addon parenthesis-left">&nbsp;</span>
+                                                    <div class="col-sm-12">
+                                                        <input
+                                                            style="text-align: right;"
+                                                            class="form-control"
+                                                            id="netOfVatUnit" 
+                                                            formControlName="netOfVatUnit"
+                                                            type="text"
+                                                            readonly
+                                                            tabindex="-1" />
+                                                    </div>
+                                                    <span class="input-group-addon parenthesis-right">&nbsp;</span>
+                                                    <span class="input-group-addon parenthesis-left">&nbsp;</span>
+                                                    <div class="col-sm-12 no-gutters">
+                                                        <input
+                                                            style="text-align: right;"
+                                                            class="form-control"
+                                                            id="netOfVatTotal" 
+                                                            formControlName="netOfVatTotal"
+                                                            type="text"
+                                                            readonly
+                                                            tabindex="-1" />
+                                                    </div>
+                                                    <span class="input-group-addon parenthesis-right">&nbsp;</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-sm-12">
+                                                <div class="input-group input-group-multi">
+                                                    <div class="input-group-addon lbl" style="text-align: right;font-weight: bold;">{{ onGetVat() }}% VAT:</div>
+                                                    <span class="input-group-addon parenthesis-left">&nbsp;</span>
+                                                    <div class="col-sm-12 single-underline">
+                                                        <input
+                                                            style="text-align: right;"
+                                                            class="form-control"
+                                                            id="vatUnit" 
+                                                            formControlName="vatUnit"
+                                                            type="text"
+                                                            readonly
+                                                            tabindex="-1" />
+                                                    </div>
+                                                    <span class="input-group-addon parenthesis-right">&nbsp;</span>
+                                                    <span class="input-group-addon parenthesis-left">&nbsp;</span>
+                                                    <div class="col-sm-12 no-gutters single-underline">
+                                                        <input
+                                                            style="text-align: right;"
+                                                            class="form-control"
+                                                            id="vatTotal" 
+                                                            formControlName="vatTotal"
+                                                            type="text"
+                                                            readonly
+                                                            tabindex="-1" />
+                                                    </div>
+                                                    <span class="input-group-addon parenthesis-right">&nbsp;</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-sm-12">
+                                                <div class="input-group input-group-multi">
+                                                    <div class="input-group-addon lbl" style="text-align: right;font-weight: bold;">Selling Price:</div>
+                                                    <span class="input-group-addon parenthesis-left">&nbsp;</span>
+                                                    <div class="col-sm-12">
+                                                        <input
+                                                            style="text-align: right;"
+                                                            class="form-control"
+                                                            id="sellingPriceUnit" 
+                                                            formControlName="sellingPriceUnit"
+                                                            type="text"
+                                                            readonly
+                                                            tabindex="-1" />
+                                                    </div>
+                                                    <span class="input-group-addon parenthesis-right">&nbsp;</span>
+                                                    <span class="input-group-addon parenthesis-left" style="background-color: white;">&nbsp;</span>
+                                                    <div class="col-sm-12 no-gutters">
+                                                        <input
+                                                            style="text-align: right;"
+                                                            class="form-control"
+                                                            id="sellingPriceTotal" 
+                                                            formControlName="sellingPriceTotal"
+                                                            type="text"
+                                                            (focus)="removeCommas($event)" (blur)="addCommas($event, 0)" />
+                                                    </div>
+                                                    <span class="input-group-addon parenthesis-right" style="background-color: white;">&nbsp;</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-sm-12">
+                                                <div class="input-group input-group-multi">
+                                                    <div class="input-group-addon lbl" style="text-align: right;font-weight: bold;">Doc. Stamp:</div>
+                                                    <span class="input-group-addon parenthesis-left">&nbsp;</span>
+                                                    <div class="col-sm-12">
+                                                        <input
+                                                            style="text-align: right;"
+                                                            class="form-control"
+                                                            id="docStampsUnit" 
+                                                            formControlName="docStampsUnit"
+                                                            type="text"
+                                                            readonly
+                                                            tabindex="-1" />
+                                                    </div>
+                                                    <span class="input-group-addon parenthesis-right">&nbsp;</span>
+                                                    <span class="input-group-addon parenthesis-left" style="background-color: white;">&nbsp;</span>
+                                                    <div class="col-sm-12 no-gutters">
+                                                        <input
+                                                            style="text-align: right;"
+                                                            class="form-control"
+                                                            id="docStampsTotal" 
+                                                            formControlName="docStampsTotal"
+                                                            type="text"
+                                                            (focus)="removeCommas($event)" (blur)="addCommas($event, 0)" />
+                                                    </div>
+                                                    <span class="input-group-addon parenthesis-right" style="background-color: white;">&nbsp;</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-sm-12">
+                                                <div class="input-group input-group-multi">
+                                                    <div class="input-group-addon lbl" style="text-align: right;font-weight: bold;">Discount:</div>
+                                                    <span class="input-group-addon parenthesis-left">(</span>
+                                                    <div class="col-sm-12">
+                                                        <input
+                                                            style="text-align: right;"
+                                                            class="form-control"
+                                                            id="discountUnit" 
+                                                            formControlName="discountUnit"
+                                                            type="text"
+                                                            readonly
+                                                            tabindex="-1" />
+                                                    </div>
+                                                    <span class="input-group-addon parenthesis-right">)</span>
+                                                    <span class="input-group-addon parenthesis-left" style="background-color: white;">(</span>
+                                                    <div class="col-sm-12 no-gutters">
+                                                        <input
+                                                            style="text-align: right;"
+                                                            class="form-control"
+                                                            id="discountTotal" 
+                                                            formControlName="discountTotal"
+                                                            type="text"
+                                                            (focus)="removeCommas($event)" (blur)="addCommas($event, 0)" />
+                                                    </div>
+                                                    <span class="input-group-addon parenthesis-right" style="background-color: white;">)</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-sm-12">
+                                                <div class="input-group input-group-multi">
+                                                    <div class="input-group-addon lbl" style="text-align: right;font-weight: bold;">Shipping / Handling:</div>
+                                                    <span class="input-group-addon parenthesis-left">&nbsp;</span>
+                                                    <div class="col-sm-12 single-underline">
+                                                        <input
+                                                            style="text-align: right;"
+                                                            class="form-control"
+                                                            id="shippingHandlingUnit" 
+                                                            formControlName="shippingHandlingUnit"
+                                                            type="text"
+                                                            readonly
+                                                            tabindex="-1" />
+                                                    </div>
+                                                    <span class="input-group-addon parenthesis-right">&nbsp;</span>
+                                                    <span class="input-group-addon parenthesis-left" style="background-color: white;">&nbsp;</span>
+                                                    <div class="col-sm-12 no-gutters single-underline">
+                                                        <input
+                                                            style="text-align: right;"
+                                                            class="form-control"
+                                                            id="shippingHandlingTotal" 
+                                                            formControlName="shippingHandlingTotal"
+                                                            type="text"
+                                                            (focus)="removeCommas($event)" (blur)="addCommas($event, 0)" />
+                                                    </div>
+                                                    <span class="input-group-addon parenthesis-right" style="background-color: white;">&nbsp;</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-sm-12">
+                                                <div class="input-group input-group-multi">
+                                                    <div class="input-group-addon lbl" style="text-align: right;font-weight: bold;">Invoice Amount:</div>
+                                                    <span class="input-group-addon parenthesis-left">&nbsp;</span>
+                                                    <div class="col-sm-12">
+                                                        <input
+                                                            style="text-align: right;"
+                                                            class="form-control"
+                                                            id="invoiceAmountUnit" 
+                                                            formControlName="invoiceAmountUnit"
+                                                            type="text"
+                                                            readonly
+                                                            tabindex="-1" />
+                                                    </div>
+                                                    <span class="input-group-addon parenthesis-right">&nbsp;</span>
+                                                    <span class="input-group-addon parenthesis-left">&nbsp;</span>
+                                                    <div class="col-sm-12 no-gutters">
+                                                        <input
+                                                            style="text-align: right;"
+                                                            class="form-control"
+                                                            id="invoiceAmountTotal" 
+                                                            formControlName="invoiceAmountTotal"
+                                                            type="text"
+                                                            readonly
+                                                            tabindex="-1" />
+                                                    </div>
+                                                    <span class="input-group-addon parenthesis-right">&nbsp;</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-sm-12">
+                                                <div class="input-group input-group-multi">
+                                                    <div class="input-group-addon lbl" style="text-align: right;font-weight: bold;">Dealer Commission:</div>
+                                                    <span class="input-group-addon parenthesis-left">(</span>
+                                                    <div class="col-sm-12 single-underline">
+                                                        <input
+                                                            style="text-align: right;"
+                                                            class="form-control"
+                                                            id="dealerCommUnit" 
+                                                            formControlName="dealerCommUnit"
+                                                            type="text"
+                                                            readonly
+                                                            tabindex="-1" />
+                                                    </div>
+                                                    <span class="input-group-addon parenthesis-right">)</span>
+                                                    <span class="input-group-addon parenthesis-left" style="background-color: white;">(</span>
+                                                    <div class="col-sm-12 no-gutters single-underline">
+                                                        <input
+                                                            style="text-align: right;"
+                                                            class="form-control"
+                                                            id="dealerCommTotal" 
+                                                            formControlName="dealerCommTotal"
+                                                            type="text"
+                                                            (focus)="removeCommas($event)" (blur)="addCommas($event, 0)" />
+                                                    </div>
+                                                    <span class="input-group-addon parenthesis-right" style="background-color: white;">)</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-sm-12">
+                                                <div class="input-group input-group-multi">
+                                                    <div class="input-group-addon lbl" style="text-align: right;font-weight: bold;">Commission Basis:</div>
+                                                    <span class="input-group-addon parenthesis-left">&nbsp;</span>
+                                                    <div class="col-sm-12 double-underline">
+                                                        <input
+                                                            style="text-align: right;"
+                                                            class="form-control"
+                                                            id="callableUnit" 
+                                                            formControlName="callableUnit"
+                                                            type="text"
+                                                            readonly
+                                                            tabindex="-1" />
+                                                    </div>
+                                                    <span class="input-group-addon parenthesis-right">&nbsp;</span>
+                                                    <span class="input-group-addon parenthesis-left">&nbsp;</span>
+                                                    <div class="col-sm-12 no-gutters double-underline">
+                                                        <input
+                                                            style="text-align: right;"
+                                                            class="form-control"
+                                                            id="callableTotal" 
+                                                            formControlName="callableTotal"
+                                                            type="text"
+                                                            readonly
+                                                            tabindex="-1" />
+                                                    </div>
+                                                    <span class="input-group-addon parenthesis-right">&nbsp;</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <br />
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="row">
+                                            <div class="col-sm-9 form-group">
+                                                <label for="accountManager">Account Manager</label>
+                                                <mat-select class="form-control" id="accountManager" formControlName="accountManager">
+                                                    <mat-option><ngx-mat-select-search formControlName="accountManagerSearch" placeholderLabel="Search" noEntriesFoundLabel="Not found"></ngx-mat-select-search></mat-option>
+                                                    <!-- <mat-option value="null" selected disabled>--Select option--</mat-option> -->
+                                                    <mat-option *ngFor="let agent of accountManagerFiltered | async" [value]="agent.agentid">{{ agent.agentname }}</mat-option>
+                                                </mat-select>
+                                            </div>
+                                            <div class="col-sm-3 form-group">
+                                                <label for="accountManagerRate">% Rate</label>
+                                                <input style="text-align: right;" class="form-control" id="accountManagerRate" formControlName="accountManagerRate" type="number" min="0.01" max="100" readonly tabindex="-1" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-12" formArrayName="salesReps">
+                                        <div class="row" [formGroupName]="i" *ngFor="let salesRepCtrl of controls; let i = index">
+                                            <div class="col-sm-8">
+                                                <mat-select class="form-control" [name]="i" formControlName="agent" (click)="onClickSalesRepName($event, i)"> <!-- (selectionChange)="onSelectionChangeSalesRepName($event, i)" -->
+                                                    <mat-option><ngx-mat-select-search formControlName="search" placeholderLabel="Search" noEntriesFoundLabel="Not found" (keyup)="onKeyupSalesRepNameSearch($event, i)"></ngx-mat-select-search></mat-option>
+                                                    <!-- <mat-option value="null" selected disabled>--Select option--</mat-option> -->
+                                                    <mat-option *ngFor="let agent of salesRepNameFiltered[i] | async" [value]="agent.agentid">{{ agent.agentname }}</mat-option>
+                                                </mat-select>
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <input style="text-align: right;" class="form-control" [name]="i" formControlName="rate" (change)="onChangeSalesRepRate($event, i)" type="number" min="0.01" max="99.99" step="0.01" placeholder="% Rate" />
+                                            </div>
+                                            <div class="col-sm-1" style="padding: 0;">
+                                                <button type="button" class="btn btn-danger" (click)="onDeleteSalesRep(i)">X</button>
+                                            </div>
+                                            <br />
+                                            <br />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-12 text-right">
+                                        <button type="button" class="btn btn-success" (click)="onAddSalesRep()" [disabled]="onSetEnable">Add Sales Rep</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-6 form-group pull-right">
+                                <label for="jobOrder">Job Order No.</label>
+                                <input 
+                                    class="form-control"
+                                    id="jobOrder" 
+                                    formControlName="jobOrder"
+                                    type="text" *hasNotRoles="[roles.jobordereditor,roles.joborderadmin,roles.admin]; for: user"/>
+                                <div [ngClass]="{'input-group': isAdmin}" *hasRoles="[roles.jobordereditor,roles.joborderadmin,roles.admin]; for: user">
+                                    <ng-template [ngIf]= "!isEditJobOrder">
+                                        <input 
+                                            class="form-control"
+                                            id="jobOrder" 
+                                            formControlName="jobOrder"
+                                            type="text" />
+                                    </ng-template>
+                                    <ng-template [ngIf]= "isEditJobOrder">
+                                        <mat-select class="form-control" id="jobOrder" formControlName="jobOrder">
+                                            <mat-option><ngx-mat-select-search formControlName="jobOrderSearch" placeholderLabel="Search" noEntriesFoundLabel="Not found"></ngx-mat-select-search></mat-option>
+                                            <!-- <mat-option value="null" selected disabled>--Select option--</mat-option> -->
+                                            <mat-option *ngFor="let jobOrder of jobOrderFiltered | async" [value]="jobOrder">{{ jobOrder.joborderno }}</mat-option>
+                                        </mat-select>
+                                    </ng-template>
+                                    <span class="input-group-btn" *ngIf="isAdmin"><button class="btn btn-info" type="button" id="toggleJobOrder" (click)="onToggleJobOrderControl()">{{ isEditJobOrder ? 'Update' : 'Create' }}</button></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12 text-right">
+                                <button class="btn btn-success cmd" type="submit" [disabled]="!frm.valid">Submit</button>
+                                <button class="btn btn-primary cmd" type="button" (click)="onClear()">Clear</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+  

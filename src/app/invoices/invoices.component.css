@@ -1,0 +1,31 @@
+input.ng-invalid.ng-touched {
+    border: 1px solid red;
+}
+
+.input-group-addon {
+    min-width: 170px;
+    text-align:left;
+}
+
+input[readonly] {
+    background-color: #eeeeee;
+}
+
+input.empty {
+    background-image: repeating-linear-gradient(-45deg, #eeeeee, #eeeeee 5px, #dddddd 5px, #dddddd 10px);
+    /* background-color: #dddddd; */
+}
+
+.input-group-multi [class*='col-'] {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.input-group-multi .form-control {
+    border-right: 0;
+}
+
+.input-group-multi [class*='col-']:last-child .form-control {
+    border-radius: 0 4px 4px 0;
+    border-right: 1px solid #ccc;
+}

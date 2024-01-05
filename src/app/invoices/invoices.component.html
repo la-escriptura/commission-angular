@@ -1,0 +1,247 @@
+<div class="container">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="row">
+                <div class="col-sm-12"> 
+                    <form [formGroup]="frm" (ngSubmit)="onSubmit()">
+                        <div class="row">
+                            <div class="col-sm-6 form-group">
+                                <label for="customerName">Customer Name</label>
+                                <input 
+                                    class="form-control"
+                                    id="customerName" 
+                                    formControlName="customerName"
+                                    type="text"
+                                    readonly
+                                    tabindex="-1" />
+                            </div>
+                            <div class="col-sm-3 form-group">
+                                <label for="jobOrderNo">Job Order No.</label>
+								<ng-template [ngIf]= "isEditInvoice">
+									<input 
+										class="form-control"
+										id="jobOrderNo" 
+										formControlName="jobOrderNo"
+										type="text"
+                                        readonly
+                                        tabindex="-1" />
+								</ng-template>
+								<ng-template [ngIf]= "!isEditInvoice">
+									<mat-select class="form-control" id="jobOrderNo" formControlName="jobOrderNo">
+										<mat-option><ngx-mat-select-search formControlName="jobOrderNoSearch" placeholderLabel="Search" noEntriesFoundLabel="Not found"></ngx-mat-select-search></mat-option>
+										<!-- <mat-option value="null" selected disabled>--Select option--</mat-option> -->
+										<mat-option *ngFor="let jobOrder of jobOrderNoFiltered | async" [value]="jobOrder">{{ jobOrder.joborderno }}</mat-option>
+									</mat-select>
+								</ng-template>
+                            </div>
+                            <div class="col-sm-3 form-group">
+                                <label for="dt">Date</label>
+                                <input 
+                                    class="form-control"
+                                    id="dt" 
+                                    formControlName="dt"
+                                    type="date" />
+                            </div>
+                        </div>
+                        <br />
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <div class="row">
+                                    <div class="col-sm-9 form-group">
+                                        <label for="quantity">Qty</label>
+                                        <div class="input-group">
+                                            <input 
+                                                style="text-align: right;"
+                                                class="form-control"
+                                                id="quantity" 
+                                                formControlName="quantity"
+                                                type="text"
+                                                (focus)="removeCommas($event)" (blur)="addCommas($event, 0, 0, 0)" />
+                                            <span class="input-group-addon" style="min-width: 70px;">{{ onGetInvoiceRemainingBalance(true) }} remaining</span>
+                                        </div> 
+                                        <p *ngIf="onIsQuantityExceed()" style="color: red;">Quantity exceeds the remaining value.</p>
+                                    </div>
+                                    <div class="col-sm-3 form-group">
+                                        <label for="unitMeasure">Unit</label>
+                                        <input 
+                                            class="form-control"
+                                            id="unitMeasure" 
+                                            formControlName="unitMeasure"
+                                            type="text"
+                                            readonly
+                                            tabindex="-1" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-8">
+                                <div class="row">
+                                    <div class="col-sm-6 form-group">
+                                        <label for="formTitle">Form Title</label>
+                                        <input 
+                                            class="form-control"
+                                            id="formTitle" 
+                                            formControlName="formTitle"
+                                            type="text"
+                                            readonly
+                                            tabindex="-1" />
+                                    </div>
+                                    <div class="col-sm-3 form-group">
+                                        <label for="netOfVatUnit">Unit Price <span style="font-size:xx-small;">(Net of VAT)</span></label>
+                                        <input 
+                                            style="text-align: right;"
+                                            class="form-control"
+                                            id="netOfVatUnit" 
+                                            formControlName="netOfVatUnit"
+                                            type="text"
+                                            readonly
+                                            tabindex="-1" />
+                                    </div>
+                                    <div class="col-sm-3 form-group">
+                                        <label for="netOfVatTotal">Total <span style="font-size:xx-small;">(Net of VAT)</span></label>
+                                        <input 
+                                            style="text-align: right;"
+                                            class="form-control"
+                                            id="netOfVatTotal" 
+                                            formControlName="netOfVatTotal"
+                                            type="text"
+                                            readonly
+                                            tabindex="-1" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+    
+                        <div class="row">
+                            <div class="col-sm-8">
+                                <div class="row">
+                                    <div class="col-sm-6 form-group pull-right">
+                                        <label for="deliveryReceipt">Delivery Receipt No.</label>
+                                        <input 
+                                            class="form-control"
+                                            id="deliveryReceipt" 
+                                            formControlName="deliveryReceipt"
+                                            type="text" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <br />
+                                <div class="row" style="padding-top: 5px;">
+                                    <div class="col-sm-12">
+                                        <div class="input-group">
+                                            <span class="input-group-addon" style="font-weight: bold;">Net of VAT</span>
+                                            <input
+                                                style="text-align: right;"
+                                                class="form-control"
+                                                id="netOfVat" 
+                                                formControlName="netOfVat"
+                                                type="text"
+                                                readonly
+                                                tabindex="-1" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="input-group">
+                                            <span class="input-group-addon" style="font-weight: bold;">{{ onGetVat() }}% VAT</span>
+                                            <input
+                                                style="text-align: right;"
+                                                class="form-control"
+                                                id="vat" 
+                                                formControlName="vat"
+                                                type="text"
+                                                readonly
+                                                tabindex="-1" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="input-group">
+                                            <span class="input-group-addon" style="font-weight: bold;">Selling Price</span>
+                                            <input
+                                                style="text-align: right;"
+                                                class="form-control"
+                                                id="sellingPrice" 
+                                                formControlName="sellingPrice"
+                                                type="text"
+                                                readonly
+                                                tabindex="-1" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="input-group">
+                                            <span class="input-group-addon" style="font-weight: bold;">Doc. Stamp</span>
+                                            <input
+                                                style="text-align: right;"
+                                                class="form-control"
+                                                id="docStamps" 
+                                                formControlName="docStamps"
+                                                type="text"
+                                                readonly
+                                                tabindex="-1" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="input-group">
+                                            <span class="input-group-addon" style="font-weight: bold;">Invoice Amount</span>
+                                            <input
+                                                style="text-align: right;"
+                                                class="form-control"
+                                                id="invoiceAmount" 
+                                                formControlName="invoiceAmount"
+                                                type="text"
+                                                readonly
+                                                tabindex="-1" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+    
+                        <br />
+                        <div class="row">
+                            <div class="col-sm-4 form-group pull-right">
+                                <label for="invoice">Invoice No.</label>
+                                <input 
+                                    class="form-control"
+                                    id="invoice" 
+                                    formControlName="invoice"
+                                    type="text" *hasNotRoles="[roles.invoiceeditor,roles.invoiceadmin,roles.admin]; for: user"/>
+                                <div [ngClass]="{'input-group': isAdmin}" *hasRoles="[roles.invoiceeditor,roles.invoiceadmin,roles.admin]; for: user">
+                                    <ng-template [ngIf]= "!isEditInvoice">
+                                        <input 
+                                            class="form-control"
+                                            id="invoice" 
+                                            formControlName="invoice"
+                                            type="text" />
+                                    </ng-template>
+                                    <ng-template [ngIf]= "isEditInvoice">
+                                        <mat-select class="form-control" id="invoice" formControlName="invoice">
+                                            <mat-option><ngx-mat-select-search formControlName="invoiceSearch" placeholderLabel="Search" noEntriesFoundLabel="Not found"></ngx-mat-select-search></mat-option>
+                                            <!-- <mat-option value="null" selected disabled>--Select option--</mat-option> -->
+                                            <mat-option *ngFor="let invoice of invoiceFiltered | async" [value]="invoice">{{ invoice.invoiceno }}</mat-option>
+                                        </mat-select>
+                                    </ng-template>
+                                    <span class="input-group-btn" *ngIf="isAdmin"><button class="btn btn-info" type="button" id="toggleInvoice" (click)="onToggleInvoiceControl()">{{ isEditInvoice ? 'Update' : 'Create' }}</button></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12 text-right">
+                                <button class="btn btn-success cmd" type="submit" [disabled]="!frm.valid">Submit</button>
+                                <button class="btn btn-primary cmd" type="button" (click)="onClear()">Clear</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+  

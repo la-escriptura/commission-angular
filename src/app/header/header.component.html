@@ -1,0 +1,31 @@
+<nav class="navbar navbar-default">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a href="#" class="navbar-brand">NOVA Commission System</a>
+        </div>
+        <div class="collapse navbar-collapse">
+            <ul class="nav navbar-nav">
+                <li routerLinkActive="active"*ngIf="!isAuthenticated"><a routerLink="/auth">Authenticate</a></li>
+                <li routerLinkActive="active" *hasRoles="[roles.joborder,roles.jobordereditor,roles.joborderadmin,roles.admin]; for: user"><a routerLink="/job-orders">Job Orders</a></li>
+                <li routerLinkActive="active" *hasRoles="[roles.invoice,roles.invoiceeditor,roles.invoiceadmin,roles.admin]; for: user"><a routerLink="/invoices">Invoices</a></li>
+                <li routerLinkActive="active" *hasRoles="[roles.receipt,roles.receipteditor,roles.receiptadmin,roles.admin]; for: user"><a routerLink="/receipts">Receipts</a></li>
+                <li routerLinkActive="active" *hasRoles="[roles.report,roles.admin]; for: user"><a routerLink="/reports">Reports</a></li>
+                <li routerLinkActive="active" *hasRoles="[roles.inquiry,roles.admin]; for: user"><a routerLink="/inquiry">Inquiry</a></li>
+                <li routerLinkActive="active" *hasRoles="[roles.admin]; for: user"><a routerLink="/admin">Admin</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li style="text-align: right;">Version:&nbsp;<br />Current User:&nbsp;</li>
+                <li style="padding-right: 100px;">&nbsp;{{ onGetVersion() }}<br />
+                    <span class="dropdown" appDropdown *ngIf="isAuthenticated">
+                        &nbsp;<a class="dropdown-toggle" style="cursor: pointer;" role="button">{{ onGetCurrentUser() }} <span class="caret"></span></a>
+                        <ul class="dropdown-menu dropdown-menu-left">
+                            <li><a style="cursor: pointer;" (click)="onChangePassword()">Change Password</a></li>
+                        </ul>
+                    </span>
+                </li>
+                <li *ngIf="isAuthenticated"><a style="cursor: pointer;" (click)="onLogout()" tabindex="0">Logout</a></li>
+            </ul>
+        </div>
+        <ng-template appPlaceHolder></ng-template>
+    </div>
+</nav>

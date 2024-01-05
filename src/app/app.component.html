@@ -1,0 +1,6 @@
+<app-header></app-header>
+<div *ngIf="isLoading" style="text-align: center;">
+    <app-loading-spinner [menu]="menu"></app-loading-spinner>
+</div>
+<router-outlet *ngIf="!isLoading"></router-outlet>
+<ng-template appPlaceHolder></ng-template>
